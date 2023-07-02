@@ -1,24 +1,28 @@
 from aiogram.utils.executor import start_polling
 from aiogram import Bot, Dispatcher, types
 from aiohttp import ClientSession
+import os
+from dotenv import load_dotenv
 
-API_TOKEN = "6324497192:AAHOKHg2j_6b_N5toAJAqEuYby1qUfDmosk"
+load_dotenv()
 
-bot = Bot(token=API_TOKEN)
+TG_API_TOKEN = os.getenv('TG_API_TOKEN')
+
+bot = Bot(token=TG_API_TOKEN)
 dp = Dispatcher(bot)
 
 
 @dp.message_handler(commands=["start"])
 async def process_start_command(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ["Узнать погоду в Краснодаре"]
-    keyboard.add(*buttons)
+    markup.add(*buttons)
     await bot.send_message(
         message.chat.id,
         "Привет, "
         + message.from_user.first_name
         + "! Чтобы узнать погоду, нажми на кнопку ниже.",
-        reply_markup=keyboard,
+        reply_markup=markup,
     )
 
 
@@ -42,9 +46,3 @@ async def echo_message(msg: types.Message):
 
 
 start_polling(dp)
-
-
-if __name__ == "__main__":
-    from aiogram import executor
-
-    executor.start_polling(dp, skip_updates=True)
